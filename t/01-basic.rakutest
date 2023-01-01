@@ -1,6 +1,116 @@
 use Test;
-use CLI::Graphing::VerticalBarChart;
+use lib 'lib';
+use CLI::Graphing::BarChart::Vertical;
 
-pass "replace me";
+my $data = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+my $bare_graph = CLI::Graphing::BarChart::Vertical.new(
+	data         => $data,
+	graph_height => 10
+);
+
+
+my $expected_graph =
+"                    █
+                  █ █
+                █ █ █
+              █ █ █ █
+            █ █ █ █ █
+          █ █ █ █ █ █
+        █ █ █ █ █ █ █
+      █ █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █ █
+  █ █ █ █ █ █ █ █ █ █";
+
+is $bare_graph.generate(), $expected_graph, 'bad bare graph';
+
+my $x_axis_graph = CLI::Graphing::BarChart::Vertical.new(
+	data			=> $data,
+	graph_height	=> 10,
+	x_axis_labels	=> <a b c d e f g h i j k>.Array
+);
+
+$expected_graph =
+"                    █
+                  █ █
+                █ █ █
+              █ █ █ █
+            █ █ █ █ █
+          █ █ █ █ █ █
+        █ █ █ █ █ █ █
+      █ █ █ █ █ █ █ █
+    █ █ █ █ █ █ █ █ █
+  █ █ █ █ █ █ █ █ █ █
+─────────────────────
+a b c d e f g h i j k";
+
+is $x_axis_graph.generate, $expected_graph, 'bad x axis only graph';
+
+my $y_axis_graph = CLI::Graphing::BarChart::Vertical.new(
+	data			=> $data,
+	graph_height	=> 10,
+	y_axis_labels	=> <a b c d e f g h i j>.Array
+);
+
+$expected_graph =
+"j │                     █
+i │                   █ █
+h │                 █ █ █
+g │               █ █ █ █
+f │             █ █ █ █ █
+e │           █ █ █ █ █ █
+d │         █ █ █ █ █ █ █
+c │       █ █ █ █ █ █ █ █
+b │     █ █ █ █ █ █ █ █ █
+a │   █ █ █ █ █ █ █ █ █ █";
+
+
+is $y_axis_graph.generate, $expected_graph, 'bad y axis only graph';
+
+my $x_and_y_axis_graph = CLI::Graphing::BarChart::Vertical.new(
+	data			=> $data,
+	graph_height	=> 10,
+	x_axis_labels	=> <a b c d e f g h i j k>.Array,
+    y_axis_labels	=> <0 1 2 3 4 5 6 7 8 9>.Array
+);
+
+$expected_graph =
+"9 │                     █
+8 │                   █ █
+7 │                 █ █ █
+6 │               █ █ █ █
+5 │             █ █ █ █ █
+4 │           █ █ █ █ █ █
+3 │         █ █ █ █ █ █ █
+2 │       █ █ █ █ █ █ █ █
+1 │     █ █ █ █ █ █ █ █ █
+0 │   █ █ █ █ █ █ █ █ █ █
+   ──────────────────────
+    a b c d e f g h i j k";
+
+is $x_and_y_axis_graph.generate, $expected_graph, 'bad x + y axis graph';
+
+my $unspaced_graph = CLI::Graphing::BarChart::Vertical.new(
+	data => $data,
+	graph_height			=> 10,
+	x_axis_labels			=> <a b c d e f g h i j k>.Array,
+    y_axis_labels			=> <0 1 2 3 4 5 6 7 8 9>.Array,
+	space_between_columns	=> False
+);
+
+$expected_graph =
+"9 │          █
+8 │         ██
+7 │        ███
+6 │       ████
+5 │      █████
+4 │     ██████
+3 │    ███████
+2 │   ████████
+1 │  █████████
+0 │ ██████████
+   ───────────
+   abcdefghijk";
+
+is $unspaced_graph.generate, $expected_graph, 'bad x+y without spaces graph';
 
 done-testing;
