@@ -1,0 +1,27 @@
+{
+  "auth": "zef:masukomi",
+  "authors": [
+    ""
+  ],
+  "build-depends": [
+  ],
+  "depends": [
+    "Listicles",
+    "Text::Wrap:ver<0.0.3+>"
+  ],
+  "description": "blah blah blah",
+  "license": "Artistic-2.0",
+  "name": "CLI::Graphing::VerticalBarChart",
+  "perl": "6.d",
+  "provides": {
+    "CLI::Graphing::VerticalBarChart": "lib/CLI/Graphing/VerticalBarChart.rakumod"
+  },
+  "resources": [
+  ],
+  "source-url": "",
+  "tags": [
+  ],
+  "test-depends": [
+  ],
+  "version": "0.0.1"
+}
