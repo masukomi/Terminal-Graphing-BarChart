@@ -3,7 +3,7 @@
 CLI::Graphing::BarChart is a simple library to let you produce bar graphs on the command line.
 It takes special care to give you good looking output.
 
-![example graph](../readme_images/images/x_and_y_axis.png)
+![example graph](../readme_images/images/social_media_preview.png)
 
 Currently limited to vertical bar charts. See the end of this document for future plans & contribution guidelines. 
 
