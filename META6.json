@@ -14,6 +14,8 @@
   "name": "CLI::Graphing::BarChart",
   "perl": "6.d",
   "provides": {
+    "CLI::Graphing::BarChart::Core": "lib/CLI/Graphing/BarChart/Core.rakumod",
+    "CLI::Graphing::BarChart::Horizontal": "lib/CLI/Graphing/BarChart/Horizontal.rakumod",
     "CLI::Graphing::BarChart::Vertical": "lib/CLI/Graphing/BarChart/Vertical.rakumod"
   },
   "resources": [

@@ -1,0 +1,58 @@
+use Test;
+use lib 'lib';
+use CLI::Graphing::BarChart::Horizontal;
+
+my $data = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+my $bare_graph = CLI::Graphing::BarChart::Horizontal.new(
+	data         => $data,
+	bar_length   => 10
+);
+
+
+my $expected_graph =
+"          \n▄         \n▄▄        \n▄▄▄       \n▄▄▄▄      \n▄▄▄▄▄     \n▄▄▄▄▄▄    \n▄▄▄▄▄▄▄   \n▄▄▄▄▄▄▄▄  \n▄▄▄▄▄▄▄▄▄ \n▄▄▄▄▄▄▄▄▄▄";
+
+is $bare_graph.generate(), $expected_graph, 'bad bare graph';
+
+
+
+my $x_axis_graph = CLI::Graphing::BarChart::Horizontal.new(
+	data			=> $data,
+	bar_length  	=> 10,
+	x_axis_labels	=> <a b c d e f g h i j k>.Array
+);
+throws-like { $x_axis_graph.generate }, Exception, message => /"can't have more x labels"/;
+
+$x_axis_graph = CLI::Graphing::BarChart::Horizontal.new(
+	data			=> $data,
+	bar_length  	=> 10,
+	x_axis_labels	=> <a b c d e f g h i j>.Array
+);
+
+$expected_graph =
+"          \n▄         \n▄▄        \n▄▄▄       \n▄▄▄▄      \n▄▄▄▄▄     \n▄▄▄▄▄▄    \n▄▄▄▄▄▄▄   \n▄▄▄▄▄▄▄▄  \n▄▄▄▄▄▄▄▄▄ \n▄▄▄▄▄▄▄▄▄▄\nabcdefghij";
+
+is $x_axis_graph.generate, $expected_graph, 'bad x axis only graph';
+
+my $y_axis_graph = CLI::Graphing::BarChart::Horizontal.new(
+	data			=> $data,
+	bar_length  	=> 10,
+	y_axis_labels	=> <a b c d e f g h i j>.Array
+);
+
+$expected_graph = "a │           \nb │ ▄         \nc │ ▄▄        \nd │ ▄▄▄       \ne │ ▄▄▄▄      \nf │ ▄▄▄▄▄     \ng │ ▄▄▄▄▄▄    \nh │ ▄▄▄▄▄▄▄   \ni │ ▄▄▄▄▄▄▄▄  \nj │ ▄▄▄▄▄▄▄▄▄ \n  │ ▄▄▄▄▄▄▄▄▄▄";
+
+is $y_axis_graph.generate, $expected_graph, 'bad y axis only graph';
+
+my $x_and_y_axis_graph = CLI::Graphing::BarChart::Horizontal.new(
+	data			=> $data,
+	bar_length  	=> 10,
+	x_axis_labels	=> <a b c d e f g h i j>.Array,
+    y_axis_labels	=> <0 1 2 3 4 5 6 7 8 9>.Array
+);
+
+$expected_graph ="0 │           \n1 │ ▄         \n2 │ ▄▄        \n3 │ ▄▄▄       \n4 │ ▄▄▄▄      \n5 │ ▄▄▄▄▄     \n6 │ ▄▄▄▄▄▄    \n7 │ ▄▄▄▄▄▄▄   \n8 │ ▄▄▄▄▄▄▄▄  \n9 │ ▄▄▄▄▄▄▄▄▄ \n  │ ▄▄▄▄▄▄▄▄▄▄\n  │ abcdefghij";
+
+is $x_and_y_axis_graph.generate, $expected_graph, 'bad x + y axis graph';
+
+done-testing;

@@ -1,51 +1,40 @@
-class CLI::Graphing::BarChart::Vertical {
+use CLI::Graphing::BarChart::Core;
+
+class CLI::Graphing::BarChart::Vertical is CLI::Graphing::BarChart::Core {
 	use Listicles;
 
-	has $.data;
-	has $.graph_height;
-	has $.y_axis_labels = [];
-	has $.x_axis_labels = [];
-	has $.bar_column_character = '█';
+
+	# From Core...
+	# has $.data;
+	# has $.bar_length;
+	# has $.y_axis_labels = [];
+	# has $.x_axis_labels = [];
+
+	has $.bar_drawing_character = '█';
 	has $.x_axis_divider_character = '─';
 	has $.space_between_columns = True;
+	has $.graph_height is rw = 10;
 
 
-	#| Prints the graph to standard out.
-	method print() {
-		say self.generate();
-	}
 
 	#| Generates a string representation of the graph.
 	method generate() returns Str {
-		unless $!graph_height {
-			die("You must specify a graph_height (number of lines for the core graph).");
-		}
-		if $!x_axis_labels.elems > 0 and $!x_axis_labels.elems != $!data.elems {
-			die("There must be 1 x axis label for each data element.");
-		} elsif $!x_axis_labels.elems > 0 {
-			$!x_axis_labels = $!x_axis_labels.map({.Str}).Array;
-		}
-		if $!y_axis_labels.elems > 0 and $!y_axis_labels.elems != $!graph_height {
-			die("There must be 1 y axis label for each row of the graph.");
-		} elsif $!y_axis_labels.elems > 0 {
-			$!y_axis_labels = $!y_axis_labels.map({.Str}).Array;
-		}
-
+		self.bar_length = $.graph_height;
+		self.validate-or-die();
 		# data is a list of numbers
 		#   we're going to assume numbers are percentages
-		# graph_height is the max height of the table
-		#   graph_height = 100%
-		#   column height is $graph_height * ($datum / 100)
+		# bar_length is the max height of the table
+		#   bar_length = 100%
+		#   column height is $bar_length * ($datum / 100)
 		#
 		# BUT we're actually going to bulid the table horizontally
 		# then rotate it left 90°
 		# 1st datum = first row.
 		#
 
-		my $rows = self!generate-sideways-graph($!data,
-													   $!x_axis_labels,
-													   $!graph_height,
-													   $!bar_column_character);
+		my $rows = self.generate-core-graph($.data,
+											$.bar_length,
+											$.bar_drawing_character);
 
 
 		# now we've got a bunch of horizontal bars
@@ -72,12 +61,12 @@ class CLI::Graphing::BarChart::Vertical {
 
 		# reversing the labels because 0x0 on the grid is bottom left
 		# but we need 0 to be the top one not the bottom
-		my @reversed_y_labels = $!y_axis_labels.reverse;
+		my @reversed_y_labels = $.y_axis_labels.reverse;
 
 		# Going to need these in a moment.
-		my $max_x_label = $!x_axis_labels.is-empty
+		my $max_x_label = $.x_axis_labels.is-empty
 							?? 0
-							!! $!x_axis_labels.map({.chars}).max;
+							!! $.x_axis_labels.map({.chars}).max;
 		my $max_y_label = @reversed_y_labels.is-empty
 						   ?? 0
 						   !! @reversed_y_labels.map({.chars}).max;
@@ -95,15 +84,15 @@ class CLI::Graphing::BarChart::Vertical {
 		# This is separated out because the special handling
 		# required for the divider line resulted in a whole
 		# pile of "oh but if there's an x label" complications
-		if ! $!x_axis_labels.is-empty {
-			$padded_rows = self!append-x-label-rows($padded_rows, $!x_axis_labels, $max_y_label);
+		if ! $.x_axis_labels.is-empty {
+			$padded_rows = self!append-x-label-rows($padded_rows, $.x_axis_labels, $max_y_label);
 		}
 
 		# join the cells together into one big string
 		# with or without spaces between columns.
 		my $response = self!join-rows($padded_rows,
-									 $!space_between_columns,
-									 (! $!x_axis_labels.is-empty),
+									 $.space_between_columns,
+									 (! $.x_axis_labels.is-empty),
 									 $max_y_label);
 		return $response;
 	}
@@ -111,45 +100,6 @@ class CLI::Graphing::BarChart::Vertical {
 
 	#### Private stuff you don't need to worry about
 	#### ... unless there's a bug ;)
-
-	# pads the string you passed in with spaces up to $width
-	method !pad-with-space(Str $string, Int $width, Bool $pad_right=True) returns Str {
-		return $string if $string.chars >= $width;
-
-		return sprintf('%-' ~ $width ~ 's', $string) if $pad_right;
-		return sprintf('%' ~ $width ~ 's', $string);
-	}
-	# method !pad-with-x-array(Str $string, Int $width, Str $padding_char=' ') returns Array {
-	method !pad-with-x-array(Str $string,
-							 Int $width,
-							 Str $padding_char=' ',
-							 Bool $pad_right = True) returns Array {
-		my @response = $string.split('', skip-empty => True).Array;
-		return @response if @response.elems >= $width;
-		if $pad_right {
-			return @response.append($padding_char xx $width - @response.elems);
-		}
-		return ($padding_char xx $width - @response.elems).Array.append: @response;
-	}
-
-	method !generate-sideways-graph(Array $data,
-									Array $x_axis_labels,
-									Int $graph_height,
-									Str $bar_column_character) returns Array {
-
-		my @rows = [];
-		my @col_widths = []; # if your x axis label is > 1 char we need to compensate
-		for $data.pairs -> $pair {
-			my $num_chars = $graph_height * ($pair.value / 100);
-
-			my @new_row = self!pad-with-x-array(($bar_column_character x $num_chars), $graph_height);
-			# remember, the graph is sideways, so the x axis is currently on the left
-			# if it's not there we don't do anything
-			# if it is there we prepend to the left side of the row
-			@rows.push: @new_row;
-		}
-		return @rows;
-	}
 
 	method !append-x-label-rows(Array $rows,
 								Array $x_axis_labels,
@@ -166,10 +116,10 @@ class CLI::Graphing::BarChart::Vertical {
 		my @label_row = @divider_row;
 		#                  (one column's worth of ─)  repeated for num columns
 		@divider_row.append: (
-			($!x_axis_divider_character x $max_x_label) xx $x_axis_labels.elems
+			($.x_axis_divider_character x $max_x_label) xx $x_axis_labels.elems
 		).Array;
 
-		@label_row.append: $x_axis_labels.map({self!pad-with-space($_, $max_x_label)}).Array;
+		@label_row.append: $x_axis_labels.map({self.pad-with-space($_, $max_x_label)}).Array;
 
 		$rows.push: @divider_row;
 		$rows.push: @label_row;
@@ -196,7 +146,7 @@ class CLI::Graphing::BarChart::Vertical {
 			my @row = [];
 			#  $row_pair: 9 => $(" ", " ", " ", " ", " ", "█")
 			if $has_y_labels {
-				my $left_chars = self!pad-with-x-array(
+				my $left_chars = self.pad-with-x-array(
 										$reversed_y_labels[$row_pair.key],
 										$max_y_label,
 										' ',
@@ -206,7 +156,7 @@ class CLI::Graphing::BarChart::Vertical {
 				@row.push: $left_chars;
 			}
 			for $original_row.Array -> $column {
-				my $padded_column = self!pad-with-space($column, $column_width);
+				my $padded_column = self.pad-with-space($column, $column_width);
 				@row.append: $padded_column;
 			}
 			@result.push: @row;
@@ -237,13 +187,37 @@ class CLI::Graphing::BarChart::Vertical {
 			}
 			# now deal with the last 2 rows
 			@response.append: $padded_rows[*-2].join(
-				$has_x_axis ?? $!x_axis_divider_character !! ' '
+				$has_x_axis ?? $.x_axis_divider_character !! ' '
 			);
 			@response.append: "\n";
 			@response.append: $padded_rows[*-1].join(' ');
 			return @response.join('');
 		} else {
 			return $padded_rows.map({.join('')}).join("\n");
+		}
+	}
+	method validate-or-die(){
+		self.validate-bar-length();
+		if $.x_axis_labels {
+			self.validate-x-labels($.x_axis_labels, $.data);
+			self.x_axis_labels = $.x_axis_labels.map({.Str}).Array;
+			# $.x_axis_labels.map({.Str}).Array;
+		}
+		if $.y_axis_labels {
+			self.validate-y-labels($.y_axis_labels);
+			self.y_axis_labels = $.y_axis_labels.map({.Str}).Array;
+			# $.y_axis_labels.map({.Str}).Array;
+		}
+	}
+	method validate-x-labels($x_labels, $data){
+		return True unless $x_labels;
+		if $x_labels.elems > 0 and $x_labels.elems != $data.elems {
+			die("There must be 1 x axis label for each data element.");
+		}
+	}
+	method validate-y-labels($y_labels){
+		if $y_labels.elems > 0 and $y_labels.elems != $.bar_length {
+			die("There must be 1 y axis label for each row of the graph.");
 		}
 	}
 }
