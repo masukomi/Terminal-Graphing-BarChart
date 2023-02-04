@@ -20,9 +20,10 @@
   },
   "resources": [
   ],
-  "source-url": "https://github.com/masukomi/CLI-Graphing-BarChart.git",
+  "source-url": "https://github.com/masukomi/Terminal-Graphing-BarChart",
   "tags": [
     "cli",
+    "terminal",
     "graphing"
   ],
   "test-depends": [

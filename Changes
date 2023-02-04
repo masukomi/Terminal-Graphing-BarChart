@@ -6,6 +6,11 @@ ADDED
 
 CHANGED
 - CLI::Graphing::BarChart is now Terminal::Graphing::BarChart
+- Changed repo URL
+  https://github.com/masukomi/CLI-Graphing-BarChart.git
+  is now
+  https://github.com/masukomi/Terminal-Graphing-BarChart.git
+
 
 Version number bumped to 2.0.0 because the namespace change
 is a breaking change. 
