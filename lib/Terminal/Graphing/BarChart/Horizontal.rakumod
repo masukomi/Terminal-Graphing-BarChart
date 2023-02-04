@@ -15,15 +15,18 @@ class Terminal::Graphing::BarChart::Horizontal is Terminal::Graphing::BarChart::
 
 
 		my $rows = self.generate-core-graph($.data, $.bar_length, $.bar_drawing_character);
-		# X axis labels are just another row
-		# Y axis labels just get prepended
 		# 0x0 is top left
-		# the last row is the x axis labels (if present)
-		#
-		# 1. find the length of the longest y_axis_labels
 		my $max_y_label = $.y_axis_labels.map({.chars}).max;
+		my $max_x_label = $.x_axis_labels.is-empty ?? 0 !! 1;
+		#$.x_axis_labels.map({.Str.chars}).max;
+		my $per_x_label_chars = $max_x_label > 0
+								 ?? ($.bar_length / $.x_axis_labels.elems).Int
+								 !! 0; # guaranteed evenly divisible
+		my $padded_x_labels = $max_x_label > 0
+							   ?? $.x_axis_labels.map({self.pad-with-space($_, $per_x_label_chars)}).Array
+							   !! [];
 		my $border =[' ', '│', ' '];
-		if $.y_axis_labels {
+		if $max_y_label > 0 {
 			for (0..^$.data.elems) -> $index {
 				if $index < $.y_axis_labels.elems {
 					my $prepension = self.pad-with-x-array($.y_axis_labels[$index],
@@ -42,16 +45,17 @@ class Terminal::Graphing::BarChart::Horizontal is Terminal::Graphing::BarChart::
 														 ).append($rows[$index].Array);
 				}
 			}
-			if ! $.x_axis_labels.is-empty {
-				$rows.push(self.pad-with-x-array(" │ ",
-															$max_y_label + 3,
-															' ',
-															False
-															)
-						.append($.x_axis_labels.Array))
+			if $max_x_label > 0 {
+				$rows.push(self.pad-with-x-array(
+								  " │ ",
+								  $max_y_label + 3,
+								  ' ',
+								  False
+								  )
+								.append($padded_x_labels.Array));
 			}
-		} elsif ! $.x_axis_labels.is-empty {
-			$rows.push($.x_axis_labels)
+		} elsif $max_x_label > 0 {
+			$rows.push($padded_x_labels.Array);
 		}
 
 		self!join-rows($rows);
@@ -63,7 +67,7 @@ class Terminal::Graphing::BarChart::Horizontal is Terminal::Graphing::BarChart::
 	method validate-or-die(){
 		self.validate-bar-length();
 		if $.x_axis_labels {
-			self.validate-x-labels($.x_axis_labels);
+			self.validate-x-labels($.x_axis_labels, $.bar_length);
 			self.x_axis_labels = $.x_axis_labels.map({.Str}).Array;
 		}
 		if $.y_axis_labels {
@@ -73,12 +77,12 @@ class Terminal::Graphing::BarChart::Horizontal is Terminal::Graphing::BarChart::
 
 	}
 	#| either works or dies
-	method validate-x-labels($x_labels) {
+	method validate-x-labels($x_labels, $bar_length) {
 		return True unless $x_labels;
-		my $all_good = $x_labels.all-are(-> $x {$x.chars <= 1 });
-		die("x labels on horizontal graphs must be 1 or zero characters long") unless $all_good;
-		if $x_labels.elems > $.bar_length {
-			die ("You can't have more x labels than characters in the bar_length");
+		my $all_short = $x_labels.all-are(-> $x {$x.chars <= 1 });
+		die("x labels on horizontal graphs must be 1 or zero characters long") unless $all_short;
+		if ($bar_length % $x_labels)  != 0 {
+			die ("bar_length must be evenly divisble by the number of x_axis labels");
 		}
 	}
 	method validate-y-labels($y_labels, $data){
