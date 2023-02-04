@@ -1,6 +1,6 @@
-use CLI::Graphing::BarChart::Core;
+use Terminal::Graphing::BarChart::Core;
 
-class CLI::Graphing::BarChart::Vertical is CLI::Graphing::BarChart::Core {
+class Terminal::Graphing::BarChart::Vertical is Terminal::Graphing::BarChart::Core {
 	use Listicles;
 
 

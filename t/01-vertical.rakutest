@@ -1,9 +1,9 @@
 use Test;
 use lib 'lib';
-use CLI::Graphing::BarChart::Vertical;
+use Terminal::Graphing::BarChart::Vertical;
 
 my $data = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-my $bare_graph = CLI::Graphing::BarChart::Vertical.new(
+my $bare_graph = Terminal::Graphing::BarChart::Vertical.new(
 	data         => $data,
 	graph_height => 10
 );
@@ -23,7 +23,7 @@ my $expected_graph =
 
 is $bare_graph.generate(), $expected_graph, 'bad bare graph';
 
-my $x_axis_graph = CLI::Graphing::BarChart::Vertical.new(
+my $x_axis_graph = Terminal::Graphing::BarChart::Vertical.new(
 	data			=> $data,
 	graph_height	=> 10,
 	x_axis_labels	=> <a b c d e f g h i j k>.Array
@@ -45,7 +45,7 @@ a b c d e f g h i j k";
 
 is $x_axis_graph.generate, $expected_graph, 'bad x axis only graph';
 
-my $y_axis_graph = CLI::Graphing::BarChart::Vertical.new(
+my $y_axis_graph = Terminal::Graphing::BarChart::Vertical.new(
 	data			=> $data,
 	graph_height	=> 10,
 	y_axis_labels	=> <a b c d e f g h i j>.Array
@@ -66,7 +66,7 @@ a │   █ █ █ █ █ █ █ █ █ █";
 
 is $y_axis_graph.generate, $expected_graph, 'bad y axis only graph';
 
-my $x_and_y_axis_graph = CLI::Graphing::BarChart::Vertical.new(
+my $x_and_y_axis_graph = Terminal::Graphing::BarChart::Vertical.new(
 	data			=> $data,
 	graph_height	=> 10,
 	x_axis_labels	=> <a b c d e f g h i j k>.Array,
@@ -89,7 +89,7 @@ $expected_graph =
 
 is $x_and_y_axis_graph.generate, $expected_graph, 'bad x + y axis graph';
 
-my $unspaced_graph = CLI::Graphing::BarChart::Vertical.new(
+my $unspaced_graph = Terminal::Graphing::BarChart::Vertical.new(
 	data => $data,
 	graph_height			=> 10,
 	x_axis_labels			=> <a b c d e f g h i j k>.Array,

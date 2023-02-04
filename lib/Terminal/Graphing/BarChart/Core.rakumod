@@ -1,4 +1,4 @@
-class CLI::Graphing::BarChart::Core {
+class Terminal::Graphing::BarChart::Core {
 	use Listicles;
 	has $.data;
 	has $.bar_length is rw = 10;

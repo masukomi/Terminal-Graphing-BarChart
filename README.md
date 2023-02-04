@@ -1,6 +1,6 @@
-# CLI::Graphing::BarChart
+# Terminal::Graphing::BarChart
 
-CLI::Graphing::BarChart is a simple library to let you produce bar graphs on the command line.
+Terminal::Graphing::BarChart is a simple library to let you produce bar graphs on the command line.
 It takes special care to give you good looking output.
 
 ![example graph](../readme_images/images/social_media_preview.png)
@@ -13,9 +13,9 @@ SYNOPSIS
 
 ## Common Usage Example
 ```raku
-use CLI::Graphing::BarChart::Vertical;
+use Terminal::Graphing::BarChart::Vertical;
 
-my $x_and_y_axis_graph = CLI::Graphing::BarChart::Vertical.new(
+my $x_and_y_axis_graph = Terminal::Graphing::BarChart::Vertical.new(
     data => [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
     graph_height => 10,
     x_axis_labels => <a b c d e f g h i j k>,
@@ -98,7 +98,7 @@ to generate a legend that explains your x axis.
 ## Future Plans
 This actually starts out by generating a horizontal graph and then rotates it, and adds the X axis and divider lines (see inline comments). 
 
-The plan is to add `CLI::Graphing::BarChart::Horizontal` to this library, by extracting the initial bit of `Vertical` into a common module and then building `Horizontal` around that. 
+The plan is to add `Terminal::Graphing::BarChart::Horizontal` to this library, by extracting the initial bit of `Vertical` into a common module and then building `Horizontal` around that. 
 
 This will happen as soon as I need it, or _you_ need it enough to make a Pull Request.
 
