@@ -16,43 +16,44 @@ is $bare_graph.generate(), $expected_graph, 'bad bare graph';
 
 
 
-# my $x_axis_graph = Terminal::Graphing::BarChart::Horizontal.new(
-# 	data			=> $data,
-# 	bar_length  	=> 10,
-# 	x_axis_labels	=> <a b c d e f g h i j k>.Array
-# );
-# throws-like { $x_axis_graph.generate }, Exception, message => /"bar_length must be evenly divisble"/;
+my $x_axis_graph = Terminal::Graphing::BarChart::Horizontal.new(
+	data			=> $data,
+	bar_length  	=> 10,
+	x_axis_labels	=> <a b c d e f g h i j k>.Array
+);
+throws-like { $x_axis_graph.generate }, Exception, message => /"bar_length must be evenly divisble"/;
 
-# $x_axis_graph = Terminal::Graphing::BarChart::Horizontal.new(
-# 	data			=> $data,
-# 	bar_length  	=> 10,
-# 	x_axis_labels	=> <a b c d e f g h i j>.Array
-# );
+$x_axis_graph = Terminal::Graphing::BarChart::Horizontal.new(
+	data			=> $data,
+	bar_length  	=> 10,
+	x_axis_labels	=> <a b c d e f g h i j>.Array
+);
 
-# $expected_graph =
-# "          \n▄         \n▄▄        \n▄▄▄       \n▄▄▄▄      \n▄▄▄▄▄     \n▄▄▄▄▄▄    \n▄▄▄▄▄▄▄   \n▄▄▄▄▄▄▄▄  \n▄▄▄▄▄▄▄▄▄ \n▄▄▄▄▄▄▄▄▄▄\nabcdefghij";
 
-# is $x_axis_graph.generate, $expected_graph, 'bad x axis only graph';
+$expected_graph =
+"          \n▄         \n▄▄        \n▄▄▄       \n▄▄▄▄      \n▄▄▄▄▄     \n▄▄▄▄▄▄    \n▄▄▄▄▄▄▄   \n▄▄▄▄▄▄▄▄  \n▄▄▄▄▄▄▄▄▄ \n▄▄▄▄▄▄▄▄▄▄\n   ──────────\nabcdefghij";
 
-# my $y_axis_graph = Terminal::Graphing::BarChart::Horizontal.new(
-# 	data			=> $data,
-# 	bar_length  	=> 10,
-# 	y_axis_labels	=> <a b c d e f g h i j>.Array
-# );
+is $x_axis_graph.generate, $expected_graph, 'bad x axis only graph';
 
-# $expected_graph = "a │           \nb │ ▄         \nc │ ▄▄        \nd │ ▄▄▄       \ne │ ▄▄▄▄      \nf │ ▄▄▄▄▄     \ng │ ▄▄▄▄▄▄    \nh │ ▄▄▄▄▄▄▄   \ni │ ▄▄▄▄▄▄▄▄  \nj │ ▄▄▄▄▄▄▄▄▄ \n  │ ▄▄▄▄▄▄▄▄▄▄";
+my $y_axis_graph = Terminal::Graphing::BarChart::Horizontal.new(
+	data			=> $data,
+	bar_length  	=> 10,
+	y_axis_labels	=> <a b c d e f g h i j>.Array
+);
 
-# is $y_axis_graph.generate, $expected_graph, 'bad y axis only graph';
+$expected_graph = "a │           \nb │ ▄         \nc │ ▄▄        \nd │ ▄▄▄       \ne │ ▄▄▄▄      \nf │ ▄▄▄▄▄     \ng │ ▄▄▄▄▄▄    \nh │ ▄▄▄▄▄▄▄   \ni │ ▄▄▄▄▄▄▄▄  \nj │ ▄▄▄▄▄▄▄▄▄ \n  │ ▄▄▄▄▄▄▄▄▄▄";
 
-# my $x_and_y_axis_graph = Terminal::Graphing::BarChart::Horizontal.new(
-# 	data			=> $data,
-# 	bar_length  	=> 10,
-# 	x_axis_labels	=> <a b c d e f g h i j>.Array,
-#     y_axis_labels	=> <0 1 2 3 4 5 6 7 8 9>.Array
-# );
+is $y_axis_graph.generate, $expected_graph, 'bad y axis only graph';
 
-# $expected_graph ="0 │           \n1 │ ▄         \n2 │ ▄▄        \n3 │ ▄▄▄       \n4 │ ▄▄▄▄      \n5 │ ▄▄▄▄▄     \n6 │ ▄▄▄▄▄▄    \n7 │ ▄▄▄▄▄▄▄   \n8 │ ▄▄▄▄▄▄▄▄  \n9 │ ▄▄▄▄▄▄▄▄▄ \n  │ ▄▄▄▄▄▄▄▄▄▄\n  │ abcdefghij";
+my $x_and_y_axis_graph = Terminal::Graphing::BarChart::Horizontal.new(
+	data			=> $data,
+	bar_length  	=> 10,
+	x_axis_labels	=> <a b c d e f g h i j>.Array,
+    y_axis_labels	=> <0 1 2 3 4 5 6 7 8 9>.Array
+);
 
-# is $x_and_y_axis_graph.generate, $expected_graph, 'bad x + y axis graph';
+$expected_graph ="0 │           \n1 │ ▄         \n2 │ ▄▄        \n3 │ ▄▄▄       \n4 │ ▄▄▄▄      \n5 │ ▄▄▄▄▄     \n6 │ ▄▄▄▄▄▄    \n7 │ ▄▄▄▄▄▄▄   \n8 │ ▄▄▄▄▄▄▄▄  \n9 │ ▄▄▄▄▄▄▄▄▄ \n  │ ▄▄▄▄▄▄▄▄▄▄\n    ──────────\n    abcdefghij";
+
+is $x_and_y_axis_graph.generate, $expected_graph, 'bad x + y axis graph';
 
 done-testing;

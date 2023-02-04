@@ -9,6 +9,7 @@ class Terminal::Graphing::BarChart::Horizontal is Terminal::Graphing::BarChart::
 	# has $.x_axis_labels = [];
 
 	has $.bar_drawing_character = '▄';
+	has $.x_axis_divider_character = '─';
 
 	method generate() returns Str {
 		self.validate-or-die();
@@ -16,12 +17,18 @@ class Terminal::Graphing::BarChart::Horizontal is Terminal::Graphing::BarChart::
 
 		my $rows = self.generate-core-graph($.data, $.bar_length, $.bar_drawing_character);
 		# 0x0 is top left
-		my $max_y_label = $.y_axis_labels.map({.chars}).max;
+		my $max_y_label = $.y_axis_labels.is-empty ?? 0 !! $.y_axis_labels.map({.chars}).max;
 		my $max_x_label = $.x_axis_labels.is-empty ?? 0 !! 1;
-		#$.x_axis_labels.map({.Str.chars}).max;
+			#$.x_axis_labels.map({.Str.chars}).max;
 		my $per_x_label_chars = $max_x_label > 0
 								 ?? ($.bar_length / $.x_axis_labels.elems).Int
 								 !! 0; # guaranteed evenly divisible
+		my $divider_row = $max_x_label > 0
+						   ?? ((' ' x ($max_y_label) + 3)
+						       ~ ($.x_axis_divider_character x $.bar_length))
+								.split('', skip-empty=>True)
+						   !! [];
+
 		my $padded_x_labels = $max_x_label > 0
 							   ?? $.x_axis_labels.map({self.pad-with-space($_, $per_x_label_chars)}).Array
 							   !! [];
@@ -46,8 +53,9 @@ class Terminal::Graphing::BarChart::Horizontal is Terminal::Graphing::BarChart::
 				}
 			}
 			if $max_x_label > 0 {
+				$rows.push( $divider_row );
 				$rows.push(self.pad-with-x-array(
-								  " │ ",
+								  "   ",
 								  $max_y_label + 3,
 								  ' ',
 								  False
@@ -55,6 +63,7 @@ class Terminal::Graphing::BarChart::Horizontal is Terminal::Graphing::BarChart::
 								.append($padded_x_labels.Array));
 			}
 		} elsif $max_x_label > 0 {
+			$rows.push( $divider_row );
 			$rows.push($padded_x_labels.Array);
 		}
 
