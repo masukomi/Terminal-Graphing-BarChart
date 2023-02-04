@@ -1,5 +1,15 @@
 Revision history for CLI::Graphing::BarChart
 
+## [2.0.0] - 2023-02-4
+ADDED
+- Horizontal graphs! 🎉
+
+CHANGED
+- CLI::Graphing::BarChart is now Terminal::Graphing::BarChart
+
+Version number bumped to 2.0.0 because the namespace change
+is a breaking change. 
+
 ## [1.0.0] - 2023-01-04
 ADDED
 - Everything! 🎉
